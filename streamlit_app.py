@@ -18,17 +18,18 @@ my_dataframe = session.table("smoothies.public.fruit_options")
 cn_dataframe = my_dataframe.select(col("FRUIT_NAME")).to_pandas()
 
 ingredients_list = st.multiselect(
-    'Choose up to 5 ingredients:'
-    , cn_dataframe['FRUIT_NAME'].tolist()
+    'Choose up to 5 ingredients:',
+    cn_dataframe['FRUIT_NAME'].tolist()
 )
 
 if ingredients_list:
     ingredients_string = ''
-    
+
     for fruit_chosen in ingredients_list:
         ingredients_string += fruit_chosen + ' '
         smoothiefroot_response = requests.get("https://my.smoothiefroot.com/api/fruit/watermelon")
         sf_df = st.dataframe(data=smoothiefroot_response.json(), use_container_width=True)
+
     my_insert_stmt = """ insert into smoothies.public.orders (ingredients, name_on_order)
                 values ('""" + ingredients_string + """','""" + name_on_order + """')"""
 
@@ -37,6 +38,3 @@ if ingredients_list:
     if time_to_insert:
         session.sql(my_insert_stmt).collect()
         st.success('Your Smoothie is ordered!', icon="✅")
-
-
-
